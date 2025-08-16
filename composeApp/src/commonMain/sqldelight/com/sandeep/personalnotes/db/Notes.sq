@@ -1,0 +1,34 @@
+CREATE TABLE Note (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  bodyHtml TEXT NOT NULL,
+  createdDate TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- INSERT (Create)
+insertNote:
+INSERT INTO Note(title, bodyHtml, createdDate)
+VALUES (?, ?, ?);
+
+-- SELECT ALL (Read all notes)
+selectAllNotes:
+SELECT * FROM Note
+ORDER BY createdDate DESC;
+
+-- SELECT BY ID (Read one note)
+selectNoteById:
+SELECT * FROM Note
+WHERE id = ?;
+
+-- UPDATE (Update note by id)
+updateNoteById:
+UPDATE Note SET
+    title = ?,
+    bodyHtml = ?,
+    createdDate = ?
+WHERE id = ?;
+
+-- DELETE (Delete note by id)
+deleteNoteById:
+DELETE FROM Note
+WHERE id = ?;

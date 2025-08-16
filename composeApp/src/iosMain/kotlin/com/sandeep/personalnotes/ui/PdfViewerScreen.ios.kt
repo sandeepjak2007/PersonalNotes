@@ -1,0 +1,26 @@
+package com.sandeep.personalnotes.ui
+
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.cinterop.ExperimentalForeignApi
+import platform.Foundation.NSURL
+import platform.PDFKit.PDFView
+import platform.UIKit.UIView
+
+@OptIn(ExperimentalForeignApi::class)
+@Composable
+actual fun PlatformPdfViewer(viewModel: NoteViewModel) {
+    val filePath = viewModel.filePath.collectAsStateWithLifecycle()
+    androidx.compose.ui.interop.UIKitView(
+        factory = {
+            val pdfView = PDFView()
+            pdfView.autoScales = true
+            pdfView.document =
+                platform.PDFKit.PDFDocument(NSURL.fileURLWithPath(filePath.value ?: ""))
+            pdfView as UIView
+        },
+        modifier = Modifier.fillMaxSize()
+    )
+}
