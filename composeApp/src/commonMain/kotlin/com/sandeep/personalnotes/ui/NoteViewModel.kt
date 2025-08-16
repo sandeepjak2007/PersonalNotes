@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -25,6 +26,9 @@ class NoteViewModel(
     private val _filePath = MutableStateFlow<String?>(null)
     val filePath = _filePath.asStateFlow()
 
+    private val _currentNote = MutableStateFlow<Note?>(null)
+    val currentNote: StateFlow<Note?> = _currentNote.asStateFlow()
+
     init {
         viewModelScope.launch {
             repository.getAllNotesFlow().onSuccess { notesList ->
@@ -41,7 +45,15 @@ class NoteViewModel(
     }
 
     fun getNoteById(id: Long) = viewModelScope.launch {
-        repository.getNoteById(id)
+        repository.getNoteById(id).onSuccess {
+            _currentNote.value = it
+        }.onFailure { e ->
+            _status.emit(NoteEvent.NoteError("Failed to fetch note: ${e.message}"))
+        }
+    }
+
+    fun clearCurrentNote() {
+        _currentNote.value = null
     }
 
     fun addNote(title: String, bodyHtml: String, createdDate: String) {

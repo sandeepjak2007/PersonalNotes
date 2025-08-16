@@ -1,10 +1,11 @@
 package com.sandeep.personalnotes
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -20,7 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sandeep.personalnotes.ui.NoteAddEditScreen
 import com.sandeep.personalnotes.ui.NoteViewModel
-import com.sandeep.personalnotes.ui.NotepadYellow
+import com.sandeep.personalnotes.ui.NotepadAccent
+import com.sandeep.personalnotes.ui.NotepadLine
 import com.sandeep.personalnotes.ui.NotesListScreen
 import com.sandeep.personalnotes.ui.PlatformPdfViewer
 import com.sandeep.personalnotes.ui.Screen
@@ -34,9 +36,10 @@ fun App() {
     val navController = rememberNavController()
     val viewModel = koinViewModel<NoteViewModel>()
     Scaffold(
-        modifier = Modifier.background(NotepadYellow),
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = NotepadAccent
+            ) {
                 val currentRoute = navController.currentBackStackEntry?.destination?.route
                 bottomNavScreens.forEach { screen ->
                     NavigationBarItem(
@@ -45,7 +48,7 @@ fun App() {
                         icon = {
                             Icon(
                                 imageVector = when (screen) {
-                                    is Screen.Notes -> Icons.Default.Notes
+                                    is Screen.Notes -> Icons.AutoMirrored.Filled.Notes
                                     is Screen.PdfViewer -> Icons.Default.PictureAsPdf
                                     is Screen.NoteEdit -> Icons.Default.Home
                                 },
@@ -61,26 +64,28 @@ fun App() {
         NavHost(
             navController = navController,
             startDestination = Screen.Notes.route,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(innerPadding).fillMaxSize().background(NotepadLine)
         ) {
             composable(Screen.Notes.route) {
                 NotesListScreen(
                     viewModel = viewModel,
-                    onNoteClick = { navController.popBackStack() },
+                    onNoteClick = { id -> navController.navigate("note_edit?noteId=$id") },
                     onAddNote = { navController.navigate("note_edit?noteId=-1") }
                 )
             }
             composable(
                 "note_edit?noteId={noteId}",
                 arguments = listOf(navArgument(name = "noteId") {
-                    type = NavType.IntType
-                    defaultValue = -1
+                    type = NavType.LongType
+                    defaultValue = -1L
                 })
             ) { backStackEntry ->
-                backStackEntry.arguments?.getLong("noteId")?.takeIf { it != -1L }
+                val id = backStackEntry.arguments?.getLong("noteId")?.takeIf { it != -1L }
+                println("Note ID: $id")
                 NoteAddEditScreen(
+                    noteId = id,
                     viewModel = viewModel,
-                    onDone = { navController.popBackStack() }
+                    onDone = { navController.navigate(Screen.Notes.route) }
                 )
             }
             composable(Screen.PdfViewer.route) {
