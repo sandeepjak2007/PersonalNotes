@@ -60,6 +60,7 @@ kotlin {
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
             implementation(libs.kotlin.datetime)
+            implementation("io.github.kevinnzou:compose-webview-multiplatform:2.0.2")
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.darwin)

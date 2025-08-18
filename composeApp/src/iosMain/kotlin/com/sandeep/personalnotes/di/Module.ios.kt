@@ -22,11 +22,21 @@ actual val platformModule = module {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-actual fun saveToFile(path: String, data: ByteArray) {
+actual fun saveToFile(data: ByteArray): String {
+    lateinit var fileUrl: NSURL
     data.usePinned { pinned ->
         val nsData = NSData.dataWithBytes(pinned.addressOf(0), data.size.toULong())
-        // Create NSURL file path string
-        val fileUrl = NSURL.fileURLWithPath(path)
+        fileUrl = NSURL.fileURLWithPath(cacheFilePath("downloaded.pdf"))
         nsData.writeToURL(fileUrl, true)
     }
+    return fileUrl.toString()
+}
+
+private fun cacheFilePath(fileName: String): String {
+    val cacheDirs = platform.Foundation.NSSearchPathForDirectoriesInDomains(
+        platform.Foundation.NSCachesDirectory, platform.Foundation.NSUserDomainMask, true
+    )
+    val cacheDir =
+        (cacheDirs.firstOrNull() as? String) ?: platform.Foundation.NSTemporaryDirectory()
+    return "$cacheDir/$fileName"
 }

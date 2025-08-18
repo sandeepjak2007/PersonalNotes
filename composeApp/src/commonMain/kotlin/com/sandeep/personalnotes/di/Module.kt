@@ -21,4 +21,4 @@ val sharedModule = module {
     }
 }
 
-expect fun saveToFile(path: String, data: ByteArray)
+expect fun saveToFile(data: ByteArray): String

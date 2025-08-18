@@ -43,10 +43,9 @@ class NoteRepository(
         notesQueries.deleteNoteById(id)
     }
 
-    suspend fun downloadPdfToCache(url: String, localPath: String): String {
+    suspend fun downloadPdfToCache(url: String): String {
         val response: ByteArray = httpClient.get(url).body()
-        saveToFile(localPath, response)
-        return localPath
+        return saveToFile(response)
     }
 
 

@@ -40,7 +40,6 @@ class NoteViewModel(
             }.onFailure {
                 _status.emit(NoteEvent.NoteError(it.message ?: "Unknown error"))
             }
-            loadPdf("https://qa.pilloo.ai/GeneratedPDF/Companies/202/2025-2026/DL.pdf", "file.pdf")
         }
     }
 
@@ -86,8 +85,8 @@ class NoteViewModel(
         }
     }
 
-    fun loadPdf(url: String, localPath: String) = viewModelScope.launch {
-        val path = repository.downloadPdfToCache(url, localPath)
+    fun loadPdf(url: String) = viewModelScope.launch {
+        val path = repository.downloadPdfToCache(url)
         _filePath.value = path
     }
 }

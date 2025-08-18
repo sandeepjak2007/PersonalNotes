@@ -3,4 +3,4 @@ package com.sandeep.personalnotes.ui
 import androidx.compose.runtime.Composable
 
 @Composable
-expect fun PlatformPdfViewer(viewModel: NoteViewModel)
+expect fun PlatformPdfViewer(filePath: String)

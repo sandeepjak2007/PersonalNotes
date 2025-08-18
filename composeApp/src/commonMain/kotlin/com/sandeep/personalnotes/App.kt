@@ -3,10 +3,12 @@ package com.sandeep.personalnotes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PictureAsPdf
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -14,17 +16,25 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.multiplatform.webview.web.LoadingState
+import com.multiplatform.webview.web.WebView
+import com.multiplatform.webview.web.rememberWebViewNavigator
+import com.multiplatform.webview.web.rememberWebViewState
+import com.multiplatform.webview.web.rememberWebViewStateWithHTMLData
 import com.sandeep.personalnotes.ui.NoteAddEditScreen
 import com.sandeep.personalnotes.ui.NoteViewModel
 import com.sandeep.personalnotes.ui.NotepadAccent
 import com.sandeep.personalnotes.ui.NotepadLine
 import com.sandeep.personalnotes.ui.NotesListScreen
-import com.sandeep.personalnotes.ui.PlatformPdfViewer
+import com.sandeep.personalnotes.ui.PdfScreen
 import com.sandeep.personalnotes.ui.Screen
 import com.sandeep.personalnotes.ui.bottomNavScreens
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -55,7 +65,11 @@ fun App() {
                                 contentDescription = screen.route
                             )
                         },
-                        label = { Text(screen.route.replace("_", " ").capitalize()) }
+                        label = {
+                            Text(
+                                screen.route.replace("_", " ")
+                                    .replaceFirstChar { ch -> ch.uppercase() })
+                        }
                     )
                 }
             }
@@ -89,7 +103,23 @@ fun App() {
                 )
             }
             composable(Screen.PdfViewer.route) {
-                PlatformPdfViewer(viewModel)
+//                val state =
+//                    rememberWebViewStateWithHTMLData("https://qa.pilloo.ai/GeneratedPDF/Companies/202/2025-2026/DL.pdf", mimeType = "application/pdf")
+//                if (state.loadingState is LoadingState.Loading) {
+//                    CircularProgressIndicator(
+//                        modifier = Modifier.size(20.dp),
+//                        color = Color.Blue,
+//                        strokeWidth = 4.dp,
+//                        trackColor = Color.LightGray,
+//                        strokeCap = StrokeCap.Round
+//                    )
+//                }
+//                WebView(
+//                    state = state,
+//                    navigator = rememberWebViewNavigator(),
+//                    modifier = Modifier.fillMaxSize()
+//                )
+                PdfScreen(viewModel, "https://qa.pilloo.ai/GeneratedPDF/Companies/202/2025-2026/DL.pdf")
             }
         }
     }
